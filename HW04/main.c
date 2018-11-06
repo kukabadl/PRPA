@@ -2,25 +2,25 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <inttypes.h>
 
-int32_t mat1 [2];       //false, sloupcu je mat1[0], radku mat1[1]
-int32_t mat2 [2];       //true
+int32_t rozm[2];      //0 -> pocet radku (vyska), 1 -> pocet sloupcu (sirka)
 
-void input (bool kteraMat){
-  for (int i = 0; i < 2; i++){
-    if (kteraMat){
-      if (1 == scanf ("%d", &mat2[i])){
 
-      }
-    }
-    else {
-
-    }
+unsigned char scan(){
+  if (2 != scanf("%d %d", &rozm[0], &rozm[1])){
+    return error();
   }
-}
-int main() {
-input (false);
+  while (1 == scanf()){
 
+  }
   return 0;
+}
+
+unsigned char error (void){
+  fprintf(stderr, "Error: Chybny vstup!\n");
+  return 101;
+}
+
+unsigned char main (){
+  return scan();
 }
