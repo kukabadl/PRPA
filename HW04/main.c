@@ -21,6 +21,7 @@ unsigned char error (void){
   return 101;
 }
 
+
 unsigned char main (){
   return scan();
 }
