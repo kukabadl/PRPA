@@ -45,9 +45,13 @@ unsigned char input (){
 
   if (sign == '+' && rozm[0][0] == rozm[1][0] && rozm[0][1] == rozm[1][1]){
     printf ("%d %d\n", rozm[0][0], rozm[0][1]);
+    //printf ("sloupcu: %d\n", rozm[0][1]);
+
     for (int r = 0; r < rozm[0][0]*rozm[0][1]; r++){
       printf("%d", (*(pMat0 + r) + *(pMat1 + r)));
-      if (r % (rozm[0][1] - 1) == 0 && r != 0){
+      //printf ("\n r= %d\n", (r+1)% (rozm[0][1]));
+
+      if ((r + 1) % (rozm[0][1]) == 0){
         printf ("\n");
       }
       else printf (" ");
