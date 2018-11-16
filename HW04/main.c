@@ -19,8 +19,12 @@ unsigned char input (){
   int matrix0 [rozm[iter][0]][rozm[iter][1]];
   pMat0 = *matrix0;
   for (int i = 0; i < sizeof (matrix0)/4; i++){
-    scanf ("%d", &in);
-    *(pMat0+i) = in;
+    if (1 != scanf ("%d", &in)){
+      fprintf(stderr, "Error: Chybny vstup!\n");
+      return 100;
+	   }
+     *(pMat0+i) = in;
+
   }
 
   if (1 != scanf(" %c", &sign)){
@@ -39,7 +43,10 @@ unsigned char input (){
   pMat1 = *matrix1;
 
   for (int i = 0; i < sizeof (matrix1)/4; i++){
-    scanf ("%d", &in);
+    if (1 != scanf ("%d", &in)) {
+      fprintf(stderr, "Error: Chybny vstup!\n");
+      return 100;
+    }
     *(pMat1+i) = in;
   }
 
@@ -77,7 +84,7 @@ unsigned char input (){
     }
   }
   else if (sign == '*'){
-    if (rozm[0][1] == rozm[1][0] && rozm [0][0] == rozm [1][1]){
+    if (rozm[0][1] == rozm[1][0]){ // && rozm [0][0] == rozm [1][1]
       printf ("%d %d\n", rozm[0][0], rozm[1][1]);   //rozm[1][1] >> pocet sloupcu
       for (int i = 0; i < rozm [0][0]; i++){
         for (int q = 0; q < rozm [1][1]; q++){
