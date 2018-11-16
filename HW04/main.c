@@ -83,7 +83,6 @@ unsigned char input (){
         for (int q = 0; q < rozm [1][1]; q++){
           int mezivypocet = 0;
           for (int r = 0; r < rozm[1][0]; r++){
-            //printf ("%d\n", *(pMat0 + r + i*rozm[0][1])*(*(pMat1 + q + r*rozm[1][1])));
             mezivypocet += *(pMat0 + r + i*rozm[0][1])*(*(pMat1 + q + r*rozm[1][1]));
           }
           printf("%d", mezivypocet);
