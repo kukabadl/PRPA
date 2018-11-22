@@ -34,61 +34,50 @@ void initTempMultiply(int nRows, int nColumns, int which){
   }
 }
 
-void print(int current){    //pokud je current == -1, pak se vytiskne Temp matice, jinak prislusna matice
-  if (current == -1){
-    printf ("%d %d\n", rowTemp, columnTemp);
-    for (int r = 0; r < (rowTemp * columnTemp); r++){
-      printf("%d", *(pTemp + r));
-      if (((r + 1) % columnTemp) == 0){
-        printf ("\n");
-      }
-      else printf (" ");
+void print(int *pMat, int nRows, int nColumns){
+  printf ("%d %d\n", nRows, nColumns);
+  for (int r = 0; r < (nRows * nColumns); r++){
+    printf("%d", *(pMat + r));
+    if (((r + 1) % nColumns) == 0){
+      printf ("\n");
     }
-  }
-  else {
-    printf ("%d %d\n", *(pRow + current), *(pColumn + current));
-    for (int r = 0; r < (*(pRow + current) * (*(pColumn + current))); r++){
-      printf("%d", *(*(ppLoc + current) + r));
-      if (((r + 1) % (*(pColumn + current))) == 0){
-        printf ("\n");
-      }
-      else printf (" ");
-    }
+    else printf (" ");
   }
 }
 
-int add(int orderMat, int sgn){    //funkce pricteni matice k Temp
-  if (orderMat != 0){
-    int *pMat = *(ppLoc + orderMat);
-    if (rowTemp == *(pRow + abs(orderMat)) && columnTemp  == *(pColumn + abs(orderMat))){
-      if (orderMat < 0){
-        orderMat *= -1;
-        for (int r = 0; r < (rowTemp * columnTemp); r++){
-          *(pTemp + r) = (*(pTemp + r) + sgn*(*(pMat + r)));
-        }
+//pointer na 1. matici, pointer na 2. matici, sign, rows0, columns0, rows1, columns1
+int add(int * pMat0, int * pMat1, int sgn, int nRows0, int nColumns0, int nRows1, int nColumns1){
+  //int *pMat = *(ppLoc + orderMat);
+  if(sgn != 2){
+    //if (rowTemp == *(pRow + orderMat) && columnTemp  == *(pColumn + orderMat)){
+    if (nRows0 == nRows1 && nColumns0  == nColumns1){
+      for (int r = 0; r < (nRows0 * nColumns0); r++){
+        *(pMat0 + r) += sgn*(*(pMat1 + r));
       }
     }
-    else {
-      return 100;
-    }
+    else return 100;
   }
-  else {
-    if (multActive) int *pMat = *pTempMult1;
-    else int *pMat = *pTempMult0;
-    if (rowTemp == *(pRow + abs(orderMat)) && columnTemp  == *(pColumn + abs(orderMat))){
-      if (orderMat < 0){
-        orderMat *= -1;
-        for (int r = 0; r < (rowTemp * columnTemp); r++){
-          *(pTemp + r) = (*(pTemp + r) + sgn*(*(pMat + r)));
-        }
-      }
-    }
-    else {
-      return 100;
-    }
+  else {  
   }
   return 0;
 }
+/*
+else {
+  if (multActive) int *pMat = *pTempMult1;
+  else int *pMat = *pTempMult0;
+  if (rowTemp == *(pRow + abs(orderMat)) && columnTemp  == *(pColumn + abs(orderMat))){
+    if (orderMat < 0){
+      orderMat *= -1;
+      for (int r = 0; r < (rowTemp * columnTemp); r++){
+        *(pTemp + r) = (*(pTemp + r) + sgn*(*(pMat + r)));
+      }
+    }
+  }
+  else {
+    return 100;
+  }
+}
+*/
 
 int subtract(int orderMat){
   int *pMat = *(ppLoc + orderMat);
@@ -103,11 +92,6 @@ int subtract(int orderMat){
   }
   return 0;
 }
-/*
-int multiply(){
-  return 0;
-}
-*/
 
 int sign (int count){
   char in;
@@ -171,47 +155,18 @@ unsigned char run (){
     count ++;
   }
 
+//add: pointer na 1, pointer na 2, sign, rows0, columns0, rows1, columns1
   initTempAdd(0);
   while (current < count){
-    if (*(pSign + current) == 1){       //sign == "+"
       if ((current + 1) < count){
         if (*(pSign + current + 1) != 2){
-          add(current + 1);
+          printf("I am adding...\n");
+          add(pTemp, *(ppLoc + current + 1), *(pSign + current), rowTemp, columnTemp,*(pRow + current), *(pColumn + current));
         }
         else;
       }
-      else add(current + 1);
-    }
-    else if (*(pSign + current) == -1){       //sign == "-"
-      if ((current + 1) < count){
-        if (*(pSign + current + 1) != 2){
-          subtract(current + 1);
-        }
-        else;
-      }
-      else subtract(current + 1);
-    }
-    else if (*(pSign + current) == 2){
-      multiply(current);
-    }
-
+      else add(pTemp, *(ppLoc + current + 1), *(pSign + current), rowTemp, columnTemp,*(pRow + current), *(pColumn + current));
   /*
-    else if (sign == '-'){
-      if (rozm[0][0] == rozm[1][0] && rozm[0][1] == rozm[1][1]){
-        printf ("%d %d\n", rozm[0][0], rozm[0][1]);
-        for (int r = 0; r < rozm[0][0]*rozm[0][1]; r++){
-          printf("%d", (*(pMat0 + r) - *(pMat1 + r)));
-          if ((r + 1) % (rozm[0][1]) == 0){
-            printf ("\n");
-          }
-          else printf (" ");
-        }
-      }
-      else {
-        fprintf(stderr, "Error: Chybny vstup!\n");
-        return 100;
-      }
-    }
     else if (sign == '*'){
       if (rozm[0][1] == rozm[1][0]){                  // && rozm [0][0] == rozm [1][1]
         printf ("%d %d\n", rozm[0][0], rozm[1][1]);   //rozm[1][1] >> pocet sloupcu
@@ -241,9 +196,7 @@ unsigned char run (){
     */
     current ++;
   }
-
-  print(-1);
-
+  print(pTemp, rowTemp, columnTemp);
   for (int b = 0; b <= count; b++){
     free (*(ppLoc + b));
   }
