@@ -8,10 +8,13 @@ int * pSign;
 int * pTemp;
 int * pTempMult0;
 int * pTempMult1;
+int * pMultActive;
 int multActive;
 int rowTemp;
 int columnTemp;
 int err = 0;
+int multRows;
+int multColumns;
 
 void initTempAdd(int current){
   rowTemp = *(pRow + current);
@@ -47,6 +50,7 @@ void print(int *pMat, int nRows, int nColumns){
 
 //pointer na 1. matici, pointer na 2. matici, sign, rows0, columns0, rows1, columns1
 int add(int * pMat0, int * pMat1, int sgn, int nRows0, int nColumns0, int nRows1, int nColumns1){
+  int *pTempMult;
   //int *pMat = *(ppLoc + orderMat);
   if(sgn != 2){
     //if (rowTemp == *(pRow + orderMat) && columnTemp  == *(pColumn + orderMat)){
@@ -57,38 +61,25 @@ int add(int * pMat0, int * pMat1, int sgn, int nRows0, int nColumns0, int nRows1
     }
     else return 100;
   }
-  else {  
-  }
-  return 0;
-}
-/*
-else {
-  if (multActive) int *pMat = *pTempMult1;
-  else int *pMat = *pTempMult0;
-  if (rowTemp == *(pRow + abs(orderMat)) && columnTemp  == *(pColumn + abs(orderMat))){
-    if (orderMat < 0){
-      orderMat *= -1;
-      for (int r = 0; r < (rowTemp * columnTemp); r++){
-        *(pTemp + r) = (*(pTemp + r) + sgn*(*(pMat + r)));
+  else {
+    if (nColumns0 == nColumns1){                  // && rozm [0][0] == rozm [1][1]
+      if (multActive) pTempMult = pTempMult1;     //multActive znaci do ktere matice se bude ukladat
+      else pTempMult = pTempMult0;
+      initTempMultiply(nRows0, nColumns1, multActive);
+      for (int i = 0; i < nRows0; i++){
+        for (int q = 0; q < nColumns1; q++){
+          int mezivypocet = 0;
+          for (int r = 0; r < nRows1; r++){
+            mezivypocet += *(pMat0 + r + i * nColumns0)*(*(pMat1 + q + r * nColumns1));
+          }
+          *(pTempMult + q) = mezivypocet;
+        }
       }
     }
-  }
-  else {
-    return 100;
-  }
-}
-*/
-
-int subtract(int orderMat){
-  int *pMat = *(ppLoc + orderMat);
-  //int *pMat1 = *(ppLoc + orderMat1);
-  if (rowTemp == *(pRow + orderMat) && columnTemp  == *(pColumn + orderMat)){
-    for (int r = 0; r < (rowTemp * columnTemp); r++){
-      *(pTemp + r) = (*(pTemp + r) - (*(pMat + r)));
+    else {
+      fprintf(stderr, "Error: Chybny vstup!\n");
+      return 100;
     }
-  }
-  else {
-    return 100;
   }
   return 0;
 }
@@ -157,43 +148,49 @@ unsigned char run (){
 
 //add: pointer na 1, pointer na 2, sign, rows0, columns0, rows1, columns1
   initTempAdd(0);
+  int comeBack = 0;
   while (current < count){
+    if (*(pSign + current) != 2){
+      if ((current + 1) < count) {
+        if (*(pSign + current + 1) == 2){
+          comeBack = current;
+          current++;
+          continue;
+        }
+      }
+    }
+    else {
+      add(pMultActive, *(ppLoc + current), 2, multRows, multColumns, *(pRow + current), *(pColumn + current));
+      if ((current + 1) < count) {
+        if (*(pSign + current + 1) != 2){
+          if (multActive){
+            pMultActive = pTempMult1;
+            multActive = 0;
+          }
+          else{
+            pMultActive = pTempMult0;
+            multActive = 1;
+          }
+          add(pTemp, *(ppLoc + current + 1), 1, rowTemp, columnTemp, *(pRow + current), *(pColumn + current));
+        }
+      }
+      else{
+        //add();
+      }
+    }
+    /*
       if ((current + 1) < count){
         if (*(pSign + current + 1) != 2){
-          printf("I am adding...\n");
           add(pTemp, *(ppLoc + current + 1), *(pSign + current), rowTemp, columnTemp,*(pRow + current), *(pColumn + current));
         }
         else;
       }
-      else add(pTemp, *(ppLoc + current + 1), *(pSign + current), rowTemp, columnTemp,*(pRow + current), *(pColumn + current));
-  /*
-    else if (sign == '*'){
-      if (rozm[0][1] == rozm[1][0]){                  // && rozm [0][0] == rozm [1][1]
-        printf ("%d %d\n", rozm[0][0], rozm[1][1]);   //rozm[1][1] >> pocet sloupcu
-        for (int i = 0; i < rozm [0][0]; i++){
-          for (int q = 0; q < rozm [1][1]; q++){
-            int mezivypocet = 0;
-            for (int r = 0; r < rozm[1][0]; r++){
-              mezivypocet += *(pMat0 + r + i*rozm[0][1])*(*(pMat1 + q + r*rozm[1][1]));
-            }
-            printf("%d", mezivypocet);
-            if (q == rozm [1][1] - 1){
-              printf ("\n");
-            }
-            else printf (" ");
-          }
+      else {
+        if (*(pSign + current) != 2){
+          add(pTemp, *(ppLoc + current + 1), *(pSign + current), rowTemp, columnTemp,*(pRow + current), *(pColumn + current));
         }
       }
-      else {
-        fprintf(stderr, "Error: Chybny vstup!\n");
-        return 100;
-      }
-    }
-    else {
-      fprintf(stderr, "Error: Chybny vstup!\n");
-      return 100;
-    }
-    */
+*/
     current ++;
   }
   print(pTemp, rowTemp, columnTemp);
