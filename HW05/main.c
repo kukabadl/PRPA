@@ -71,13 +71,13 @@ int sortIt () {
 	}
 	for (int r = 0; r < numOfColumns; r++){
 
-		for (int space = 0; space < max0Size - size((*(pMatrix)) + r * interval); space++){
+		for (int space = 0; space < 3 - size((*(pMatrix)) + r * interval); space++){
 			printf(" ");
 		}
 
 		printf ("%3.1f -", (*(pMatrix)) + r * interval);
 
-		for (int space = 0; space < max1Size - size((*(pMatrix)) + (r + 1) * interval); space++){
+		for (int space = 0; space < 3 - size((*(pMatrix)) + (r + 1) * interval); space++){
 			printf(" ");
 		}
 
