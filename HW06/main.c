@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <math.h>
 
 char ** ppWord;   //ukazatel na ukazatele na jednotliva slova
 char buffer [100];
 int wordCount = 0;
+
 /*funkce, ktera slouzi pro porovnavani cisel do qsort. do qsort se na tuto funkci da pointer*/
 /*
 static int cmp_str(const void *lhs, const void *rhs)
@@ -23,7 +25,7 @@ int isChar(char in){    //pokud je dany char interpunkce vrati nulu, jinak jedni
 
 void interpunkce (char * str, int strl){
   int remove = 0;
-  for(; isChar(*(str + remove)) == 0 && remove < strl; remove++);// printf("%s ", str)
+  for(; isChar(*(str + remove)) == 0 && remove < strl; remove++);
   for (int r = remove; r <= strl; r++){
     *(str + r - remove) = *(str + r);
   }
@@ -31,31 +33,32 @@ void interpunkce (char * str, int strl){
   for(int i = strl - remove; isChar(*(str + i)) == 0 && i >= 0; i--) *(str + i) = '\0';
 }
 
-int input () {
-ppWord = (char **) malloc(101 * sizeof(char *));
+int main (int argc, char **argv){
+  ppWord = (char **) malloc(101 * sizeof(char *));
   for(;1 == scanf("%s", buffer); wordCount++){
-    printf("%s\n", buffer);
     int strLeTemp = (int) strlen(buffer);
     interpunkce(buffer, strLeTemp);
-    printf("%s\n", buffer);
     strLeTemp = (int) strlen(buffer);
-    if (((wordCount + 1) % 100) == 0){
-      ppWord = (char **) realloc (ppWord, (wordCount + 101) * sizeof(char *));
+    if(caseInsensitive){
+      for(int i = 0; i < strLeTemp; i++){
+        if (buffer[i] >= 'A' && buffer[i] <= 'Z') buffer[i] += 32;
+      }
     }
+    if (((wordCount + 1) % 100) == 0) ppWord = (char **) realloc (ppWord, (wordCount + 101) * sizeof(char *));
     *(ppWord + wordCount) = (char *) malloc((strLeTemp + 1) * sizeof(char));
     strcpy(*(ppWord + wordCount), buffer);
   }
   for (int i = 1; i < wordCount; i++) {
     for (int j = 1; j < wordCount; j++) {
-     if (strcmp(*(ppWord + j - 1), *(ppWord + j)) > 0) {
-      strcpy(buffer, *(ppWord + j - 1));
-      free(*(ppWord + j - 1));
-      *(ppWord + j - 1) = malloc((strlen(*(ppWord + j)) + 1) * sizeof(char));
-      strcpy(*(ppWord + j - 1),*(ppWord + j));
-      free(*(ppWord + j));
-      *(ppWord + j) = malloc((strlen(buffer) + 1) * sizeof(char));
-      strcpy(*(ppWord + j), buffer);
-     }
+      if (strcmp(*(ppWord + j - 1), *(ppWord + j)) > 0) {
+        strcpy(buffer, *(ppWord + j - 1));
+        free(*(ppWord + j - 1));
+        *(ppWord + j - 1) = malloc((strlen(*(ppWord + j)) + 1) * sizeof(char));
+        strcpy(*(ppWord + j - 1),*(ppWord + j));
+        free(*(ppWord + j));
+        *(ppWord + j) = malloc((strlen(buffer) + 1) * sizeof(char));
+        strcpy(*(ppWord + j), buffer);
+      }
     }
   }
   printf ("Pocet> %d\n", wordCount);
@@ -69,15 +72,10 @@ ppWord = (char **) malloc(101 * sizeof(char *));
   free(ppWord);
   //free ();     //uvolneni alokovane pameti
   return 0;
-}
-
-int main (){
-  /*Zavola funkci sortIt, ktera dela skoro vse, pokud je jeji navratova hodnota 100,
-  pak vytiskne error a tuto navratovou hodnotu take vrati. Pokud sortIt skoncila uspesne,
-  pak vrati nulu.*/
+    /*
 	if (input() == 100){
 		fprintf(stderr, "Histogram size error\n");
 		return 100;
 	}
-	else return 0;
+	else return 0;*/
 }
