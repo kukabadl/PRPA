@@ -15,18 +15,31 @@ int isNum (char * str){
 }
 
 int isArg (char * str){
-  if (strlen(str) == 2){
+  if (*(str) == '-'){
+    if (strlen(str) == 2){
+      if(*(str + 1) == 'c'){
 
-  }
-  else if (strlen(str) > 2){
+      }
+      else if(*(str + 1) == 's'){
 
+      }
+      else if(*(str + 1) == 'l'){
+
+      }
+      else {
+        fprintf(stderr, "Warning: Chybna hodnota parametru -s!");
+        return -1;
+      }
+    }
   }
+
   return 100;
 }
 
 int main (int argc, char **argv){
-  int[argc];  //pole urcuje, zda se jedna o argument nebo cislo
-  for (int i = 0; i < argc; i++){
+  int arg[3] = {0, 0, 0};  //pole urcuje, zda se jedna o argument nebo cislo
+            //-c  -s  -l
+  for (int i = 1; i < argc; i++){
 
   }
 }
