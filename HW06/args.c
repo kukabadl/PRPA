@@ -49,21 +49,21 @@ int main (int argc, char **argv){
         c = 1;
       }
       else if (argument == -1 || i + 1 >= argc){   //chybny parametr
-        printf ("je to v haji\n");
       }
       else {
         if (argument == 1){    //parametr -s
-          if (0 < isNum(*(argv + i + 1))){
+          if (0 < isNum(*(argv + i + 1)) && isNum(*(argv + i + 1)) < 3){
             s = isNum(*(argv + i + 1));
             i++;
           }
+          else fprintf (stderr, "Warning: Chybna hodnota parametru -s!\n");
         }
         else if (argument == 2){    //parametr -l
           if (0 <= isNum(*(argv + i + 1))){
             l = isNum(*(argv + i + 1));
             i++;
           }
-        else printf ("je to v haji\n");
+        else fprintf (stderr, "Warning: Chybna hodnota parametru -l!\n");
         }
       }
     }
