@@ -18,13 +18,13 @@ int isArg (char * str){
   if (*(str) == '-'){
     if (strlen(str) == 2){
       if(*(str + 1) == 'c'){
-
+        return 0;
       }
       else if(*(str + 1) == 's'){
-
+        return 1;
       }
       else if(*(str + 1) == 'l'){
-
+        return 2;
       }
       else {
         fprintf(stderr, "Warning: Chybna hodnota parametru -s!");
@@ -37,9 +37,38 @@ int isArg (char * str){
 }
 
 int main (int argc, char **argv){
-  int arg[3] = {0, 0, 0};  //pole urcuje, zda se jedna o argument nebo cislo
-            //-c  -s  -l
-  for (int i = 1; i < argc; i++){
+  int argument;
+  int c = 0;  //-c je pro case sensitive
+  int l = -1;  //-l je pro omezeni delky slova
+  int s = -1;  //-s je pro razeni - 1 je pro abecedni, 2 podle cetnosti
 
+  for (int i = 1; i < argc; i++){
+    argument = isArg(*(argv + i));
+    if (argument >= 0){
+      if (argument == 0) {        //parametr -c
+        c = 1;
+      }
+      else if (argument == -1 || i + 1 >= argc){   //chybny parametr
+        printf ("je to v haji\n");
+      }
+      else {
+        if (argument == 1){    //parametr -s
+          if (0 < isNum(*(argv + i + 1))){
+            s = isNum(*(argv + i + 1));
+            i++;
+          }
+        }
+        else if (argument == 2){    //parametr -l
+          if (0 <= isNum(*(argv + i + 1))){
+            l = isNum(*(argv + i + 1));
+            i++;
+          }
+        else printf ("je to v haji\n");
+        }
+      }
+    }
   }
+  printf ("c = %d\n", c);
+  printf ("l = %d\n", l);
+  printf ("s = %d\n", s);
 }
