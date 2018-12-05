@@ -1,16 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <math.h>
 
 char ** ppWord;   //ukazatel na ukazatele na jednotliva slova
-int ** ppStat;
+int * pStat;
 char buffer [100];
 int c = 0;  //-c je pro case sensitive
 int l = 100;  //-l je pro omezeni delky slova
 int s = -1;  //-s je pro razeni - 1 je pro abecedni, 2 podle cetnosti
-
 
 int isNum (char * str){
   int i = 0;
@@ -124,19 +121,66 @@ void sort (int wordCount){
   }
 }
 
+int statCount (int wordCount){
+  int r = 0;
+  int diff = 0;
+  for (; r < wordCount; r++){
+    *(pStat + diff * 2) = r;
+    while(r + 1 < wordCount){
+      if (strcmp(*(ppWord + r), *(ppWord + r + 1)) == 0){
+        *(pStat + diff*2 + 1) += 1;
+
+      }
+      else{
+        break;
+      }
+      r++;
+    }
+    diff++;
+  }
+  return diff;
+}
+
 int main (int argc, char **argv){
   whichArgs(argc, argv);
   int wordCount = scan();
   sort(wordCount);
-  //qsort (pMatrix, numCount, sizeof(int), cmp);                           //Volani fce qsort, ktera seradi vsechna zadana cisla
 
-  printf ("Pocet> %d\n", wordCount);
-  for(int prd = 0; prd < wordCount; prd++){
-    if (strlen(*(ppWord + prd)) <= l) printf("%s\n",*(ppWord + prd));
+  if (s == 1){      //Vypis podle cetnosti -s 1
+    pStat = calloc(wordCount * 2, sizeof(int));
+    int diff = statCount(wordCount);
+    int temp0;
+    int temp1;
+    for (int i = 1; i < diff; i++) {
+      for (int j = 1; j < diff; j++) {
+        if (*(pStat + (j - 1)*2 + 1) < *(pStat + j*2 +1)) {
+          temp0 = *(pStat + (j - 1) * 2);
+          temp1 = *(pStat + (j - 1) * 2 + 1);
+          *(pStat + (j - 1) * 2) = *(pStat + j * 2);
+          *(pStat + (j - 1) * 2 + 1) = *(pStat + j * 2 + 1);
+          *(pStat + j*2) = temp0;
+          *(pStat + j*2 + 1) = temp1;
+        }
+      }
+    }
+    for (int i = 0; i < diff; i++){
+      for (int r = 0; r <= *(pStat + i * 2 + 1); r++){
+        if (strlen(*(ppWord + *(pStat + i * 2))) <= l) printf ("%s\n", *(ppWord + *(pStat + i * 2)));
+      }
+    }
   }
+  else if (s == 2){     //Vypis podle abecedy -s2
+    for(int prd = 0; prd < wordCount; prd++){
+      if (strlen(*(ppWord + prd)) <= l) printf("%s\n",*(ppWord + prd));
+    }
+  }
+
+  printf ("Pocet: %d\n", wordCount);
+
   for (int i = 0; i < wordCount; i++){
     free(*(ppWord + i));
   }
+  free(pStat);
   free(ppWord);
   return 0;
 }
