@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 char ** ppWord;   //ukazatel na ukazatele na jednotliva slova
 int * pStat;
 char buffer [100];
-int c = 0;  //-c je pro case sensitive
+int c = 1;  //-c je pro case insensitive
 int l = 100;//-l je pro omezeni delky slova
-int s = 2;  //-s je pro razeni - 1 podle cetnosti, 2 je pro abecedni
+int s = 0;  //-s je pro razeni - 1 podle cetnosti, 2 je pro abecedni
 int diff = 0;
 
 #define spaceCount 21
@@ -33,23 +33,15 @@ void space(int strl){
 int isArg (char * str){
   if (*(str) == '-'){
     if (strlen(str) == 2){
-      if(*(str + 1) == 'c'){
-        return 0;
-      }
-      else if(*(str + 1) == 's'){
-        return 1;
-      }
-      else if(*(str + 1) == 'l'){
-        return 2;
-      }
+      if(*(str + 1) == 'c') return 0;
+      else if(*(str + 1) == 's') return 1;
+      else if(*(str + 1) == 'l') return 2;
       else {
         fprintf(stderr, "Warning: Chybna hodnota parametru -s!");
         return -1;
       }
     }
-  }
-
-  return 100;
+  } return 100;
 }
 
 void whichArgs(int argc, char **argv){
@@ -98,9 +90,10 @@ void interpunkce (char * str, int strl){
 }
 
 int scan (){
+  bool alreadyPresent = 0;
   int wordCount = 0;
   ppWord = (char **) malloc(101 * sizeof(char *));
-  for(;1 == scanf("%s", buffer); wordCount++){
+  for(;1 == scanf("%s", buffer); alreadyPresent = 0, wordCount++){
     interpunkce(buffer, (int) strlen(buffer));
     int strLeTemp = (int) strlen(buffer);
     if(c){
@@ -109,8 +102,17 @@ int scan (){
       }
     }
     if (((wordCount + 1) % 100) == 0) ppWord = (char **) realloc (ppWord, (wordCount + 101) * sizeof(char *));
-    *(ppWord + wordCount) = (char *) malloc((strLeTemp + 1) * sizeof(char));
-    strcpy(*(ppWord + wordCount), buffer);
+    for (int i = 0; i < wordCount; i++){
+      if (0 == strcmp(buffer, *(ppWord + i))){
+        //zapsat do statistik
+        alreadyPresent = 1;
+        wordCount--;
+      }
+    }
+    if(alreadyPresent == 0){
+      *(ppWord + wordCount) = (char *) malloc((strLeTemp + 1) * sizeof(char));
+      strcpy(*(ppWord + wordCount), buffer);
+    }
   }
   return wordCount;
 }
@@ -146,6 +148,7 @@ int statCount (int wordCount){
 }
 
 int main (int argc, char **argv){
+  int pocSlov = 0;
   whichArgs(argc, argv);
   int wordCount = scan();
   sort(wordCount);
@@ -177,21 +180,28 @@ int main (int argc, char **argv){
         printf("%d\n", *(pStat + i * 2 + 1) + 1);
         if (*(pStat + i * 2 + 1) < leastItems) leastItems = *(pStat + i * 2 + 1);
         if (*(pStat + i * 2 + 1) > mostItems) mostItems = *(pStat + i * 2 + 1);
+        pocSlov++;
       }
     }
   }
   else if (s == 1){     //Vypis podle cetnosti -s 1
     for(int i = 0; i < diff; i++){
+      //printf ("l = %d\n", l);
+
       if (strlen(*(ppWord + i)) <= l){
         printf ("%s", *(ppWord + *(pStat + i * 2)));
         space(strlen(*(ppWord + *(pStat + i * 2))));
         printf("%d\n", *(pStat + i * 2 + 1) + 1);
         if (*(pStat + i * 2 + 1) < leastItems) leastItems = *(pStat + i * 2 + 1);
         if (*(pStat + i * 2 + 1) > mostItems) mostItems = *(pStat + i * 2 + 1);
-        i += *(pStat + i * 2 + 2);
+        //printf ("i = %d\n", i);
+        pocSlov++;
+
+        i += *(pStat + i * 2 + 1);
       }
     }
   }
+  printf ("\nPocet slov: %d\n", pocSlov);
   printf ("Nejcastejsi:");
   space(strlen("Nejcastejsi:") + 1);
   for (int i = 0; i < diff; i++){
@@ -202,7 +212,6 @@ int main (int argc, char **argv){
   for (int i = 0; i < diff; i++){
     if (*(pStat + i * 2 + 1) == leastItems) printf (" %s", *(ppWord + *(pStat + i * 2)));
   }
-  printf ("\nPocet slov: %d\n", wordCount);
 
   for (int i = 0; i < wordCount; i++){
     free(*(ppWord + i));
