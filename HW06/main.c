@@ -6,8 +6,8 @@ char ** ppWord;   //ukazatel na ukazatele na jednotliva slova
 int * pStat;
 char buffer [100];
 int c = 0;  //-c je pro case sensitive
-int l = 100;  //-l je pro omezeni delky slova
-int s = -1;  //-s je pro razeni - 1 je pro abecedni, 2 podle cetnosti
+int l = 100;//-l je pro omezeni delky slova
+int s = 2;  //-s je pro razeni - 1 podle cetnosti, 2 je pro abecedni
 int diff = 0;
 
 #define spaceCount 21
@@ -135,13 +135,8 @@ int statCount (int wordCount){
   for (; r < wordCount; r++){
     *(pStat + diff * 2) = r;
     while(r + 1 < wordCount){
-      if (strcmp(*(ppWord + r), *(ppWord + r + 1)) == 0){
-        *(pStat + diff*2 + 1) += 1;
-
-      }
-      else{
-        break;
-      }
+      if (strcmp(*(ppWord + r), *(ppWord + r + 1)) == 0) *(pStat + diff*2 + 1) += 1;
+      else break;
       r++;
     }
     diff++;
@@ -159,7 +154,7 @@ int main (int argc, char **argv){
   pStat = calloc(wordCount * 2, sizeof(int));
   printf("Seznam slov:\n");
   int diff = statCount(wordCount);
-  if (s == 1){      //Vypis podle cetnosti -s 1
+  if (s == 2){      //Vypis podle abecedy -s 2
     int temp0;
     int temp1;
     for (int i = 1; i < diff; i++) {
@@ -184,7 +179,7 @@ int main (int argc, char **argv){
       }
     }
   }
-  else if (s == 2){     //Vypis podle abecedy -s2
+  else if (s == 1){     //Vypis podle cetnosti -s 1
     for(int i = 0; i < diff; i++){
       if (strlen(*(ppWord + i)) <= l){
         printf ("%s", *(ppWord + *(pStat + i * 2)));
