@@ -32,10 +32,8 @@ int isArg (char * str){
       }
     }
   }
-
   return 100;
 }
-
 int main (int argc, char **argv){
   int argument;
   int c = 0;  //-c je pro case sensitive

@@ -8,6 +8,9 @@ char buffer [100];
 int c = 0;  //-c je pro case sensitive
 int l = 100;  //-l je pro omezeni delky slova
 int s = -1;  //-s je pro razeni - 1 je pro abecedni, 2 podle cetnosti
+int diff = 0;
+
+#define spaceCount 21
 
 int isNum (char * str){
   int i = 0;
@@ -18,6 +21,12 @@ int isNum (char * str){
   }
   if (i == strlen(str)) return argNum;
   return -1;
+}
+
+void space(int strl){
+  for (int i = 0; i + strl < spaceCount; i++){
+    printf(" ");
+  }
 }
 
 int isArg (char * str){
@@ -123,7 +132,6 @@ void sort (int wordCount){
 
 int statCount (int wordCount){
   int r = 0;
-  int diff = 0;
   for (; r < wordCount; r++){
     *(pStat + diff * 2) = r;
     while(r + 1 < wordCount){
@@ -145,15 +153,18 @@ int main (int argc, char **argv){
   whichArgs(argc, argv);
   int wordCount = scan();
   sort(wordCount);
+  int leastItems = 1000000;
+  int mostItems = 0;
 
+  pStat = calloc(wordCount * 2, sizeof(int));
+  printf("Seznam slov:\n");
+  int diff = statCount(wordCount);
   if (s == 1){      //Vypis podle cetnosti -s 1
-    pStat = calloc(wordCount * 2, sizeof(int));
-    int diff = statCount(wordCount);
     int temp0;
     int temp1;
     for (int i = 1; i < diff; i++) {
       for (int j = 1; j < diff; j++) {
-        if (*(pStat + (j - 1)*2 + 1) < *(pStat + j*2 +1)) {
+        if (*(pStat + (j - 1)*2 + 1) > *(pStat + j*2 +1)) {
           temp0 = *(pStat + (j - 1) * 2);
           temp1 = *(pStat + (j - 1) * 2 + 1);
           *(pStat + (j - 1) * 2) = *(pStat + j * 2);
@@ -164,18 +175,38 @@ int main (int argc, char **argv){
       }
     }
     for (int i = 0; i < diff; i++){
-      for (int r = 0; r <= *(pStat + i * 2 + 1); r++){
-        if (strlen(*(ppWord + *(pStat + i * 2))) <= l) printf ("%s\n", *(ppWord + *(pStat + i * 2)));
+      if (strlen(*(ppWord + *(pStat + i * 2))) <= l) {
+        printf ("%s", *(ppWord + *(pStat + i * 2)));
+        space(strlen(*(ppWord + *(pStat + i * 2))));
+        printf("%d\n", *(pStat + i * 2 + 1) + 1);
+        if (*(pStat + i * 2 + 1) < leastItems) leastItems = *(pStat + i * 2 + 1);
+        if (*(pStat + i * 2 + 1) > mostItems) mostItems = *(pStat + i * 2 + 1);
       }
     }
   }
   else if (s == 2){     //Vypis podle abecedy -s2
-    for(int prd = 0; prd < wordCount; prd++){
-      if (strlen(*(ppWord + prd)) <= l) printf("%s\n",*(ppWord + prd));
+    for(int i = 0; i < diff; i++){
+      if (strlen(*(ppWord + i)) <= l){
+        printf ("%s", *(ppWord + *(pStat + i * 2)));
+        space(strlen(*(ppWord + *(pStat + i * 2))));
+        printf("%d\n", *(pStat + i * 2 + 1) + 1);
+        if (*(pStat + i * 2 + 1) < leastItems) leastItems = *(pStat + i * 2 + 1);
+        if (*(pStat + i * 2 + 1) > mostItems) mostItems = *(pStat + i * 2 + 1);
+        i += *(pStat + i * 2 + 2);
+      }
     }
   }
-
-  printf ("Pocet: %d\n", wordCount);
+  printf ("Nejcastejsi:");
+  space(strlen("Nejcastejsi:") + 1);
+  for (int i = 0; i < diff; i++){
+    if (*(pStat + i * 2 + 1) == mostItems) printf (" %s", *(ppWord + *(pStat + i * 2)));
+  }
+  printf ("\nNejmene caste:");
+  space(strlen("Nejmene caste:") + 1);
+  for (int i = 0; i < diff; i++){
+    if (*(pStat + i * 2 + 1) == leastItems) printf (" %s", *(ppWord + *(pStat + i * 2)));
+  }
+  printf ("\nPocet slov: %d\n", wordCount);
 
   for (int i = 0; i < wordCount; i++){
     free(*(ppWord + i));
