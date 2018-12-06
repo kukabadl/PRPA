@@ -80,11 +80,61 @@ void printAll(int wCount){
   }
 }
 
+int isArg (char * str){
+  if (*(str) == '-'){
+    if (strlen(str) == 2){
+      if(*(str + 1) == 'c') return 0;       //-c
+      else if(*(str + 1) == 's') return 1;  //-s
+      else if(*(str + 1) == 'l') return 2;  //-l
+      else {
+        return -1;
+      }
+    }
+  } return -1;
+}
+
+int isNum (char * str){
+  int i = 0;
+  int argNum = 0;
+  for(;(*(str + i) >= '0') &&  (*(str + i) <= '9') && (i < strlen(str)); i++){
+    argNum *= 10;
+    argNum += (*(str + i) - '0');
+  }
+  if (i == strlen(str)) return argNum;
+  return -1;
+}
+
 int main (int argc, char **argv){
-  int caseSens = 1;  //-c je pro case insensitive
-  int l = 100;//-l je pro omezeni delky slova
-  int s = 0;  //-s je pro razeni - 1 podle cetnosti, 2 je pro abecedni
+  int caseSens = 1;   //-c je pro case insensitive
+  int wordLen = 100;  //-l je pro omezeni delky slova
+  int sortStyle = 0;  //-s je pro razeni; 0 (default - podle poradi zapisu); 1 (podle cetnosti), 2 (podle abecedy)
   int wordCount = scan(caseSens);
+  int argTemp;
+  for(int i = 1; i < argc; i++){
+    int tempNum;
+    argTemp = isArg(*(argv + i));
+    if (argTemp == 0){
+      caseSens = 0;
+    }
+    else if (argTemp == 1){
+      if (i + 1 < argc){
+        i++;
+        tempNum = isNum(*(argv + i));
+        if (tempNum == 1 || tempNum == 2) sortStyle = tempNum;
+        else fprintf(stderr, "Warning: Chybna hodnota parametru -s!\n");
+      }
+      else fprintf(stderr, "Warning: Chybna hodnota parametru -s!\n");
+    }
+    else if (argTemp == 2){
+      if (i + 1 < argc){
+        i++;
+        tempNum = isNum(*(argv + i));
+        if (tempNum >= 0) wordLen = tempNum;
+        else fprintf(stderr, "Warning: Chybna hodnota parametru -l!\n");
+      }
+      else fprintf(stderr, "Warning: Chybna hodnota parametru -l!\n");
+    }
+  }
 
   printAll(wordCount);
   fr(wordCount);
