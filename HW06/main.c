@@ -23,6 +23,7 @@ int isNum (char * str){
   return -1;
 }
 
+
 void space(int strl){
   for (int i = 0; i + strl < spaceCount; i++){
     printf(" ");
