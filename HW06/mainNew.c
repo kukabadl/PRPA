@@ -104,12 +104,20 @@ int isNum (char * str){
   return -1;
 }
 
+void space(int strl){
+  for (int i = 0; i + strl < spaceCount; i++){
+    printf(" ");
+  }
+}
+
 int main (int argc, char **argv){
   int caseSens = 1;   //-c je pro case insensitive
   int wordLen = 100;  //-l je pro omezeni delky slova
   int sortStyle = 0;  //-s je pro razeni; 0 (default - podle poradi zapisu); 1 (podle cetnosti), 2 (podle abecedy)
-  int wordCount = scan(caseSens);
+  int maxQuant = 0;
+  int minQuant = 100000;
   int argTemp;
+
   for(int i = 1; i < argc; i++){
     int tempNum;
     argTemp = isArg(*(argv + i));
@@ -135,8 +143,79 @@ int main (int argc, char **argv){
       else fprintf(stderr, "Warning: Chybna hodnota parametru -l!\n");
     }
   }
+  int wordCount = scan(caseSens);
 
-  printAll(wordCount);
+  for (int i = 0; i < wordCount; i++) {   //Hledani maxima a minima
+    if(*(pStatQuant + i) > maxQuant) maxQuant = *(pStatQuant + i);
+    if(*(pStatQuant + i) < minQuant) minQuant = *(pStatQuant + i);
+  }
+
+  printf("Seznam slov:\n");
+
+  if (sortStyle == 0){
+    for (int i = 0; i < wordCount; i++){
+      printf("%s", *(ppWord + i));
+      space(strlen(*(ppWord + i)));
+      printf("%d\n", *(pStatQuant + i));
+    }
+  }
+
+  else if (sortStyle == 1){   //vypis podle cetnosti
+    for (int i = minQuant; i <= maxQuant; i++){
+      for (int r = 0; r < wordCount; r++){
+        if (*(pStatQuant + r) == i){
+          printf("%s", *(ppWord + r));
+          space(strlen(*(ppWord + r)));
+          printf("%d\n", *(pStatQuant + r));
+        }
+      }
+    }
+  }
+  else if (sortStyle == 2){   //abecedni vypis
+    char buffer[100];
+    int temp;
+    for (int i = 1; i < wordCount; i++) {
+      for (int j = 1; j < wordCount; j++) {
+        if (strcmp(*(ppWord + j - 1), *(ppWord + j)) > 0) {
+          strcpy(buffer, *(ppWord + j - 1));
+          temp = *(pStatQuant + j - 1);
+
+          free(*(ppWord + j - 1));
+          *(ppWord + j - 1) = malloc((strlen(*(ppWord + j)) + 1) * sizeof(char));
+
+          strcpy(*(ppWord + j - 1),*(ppWord + j));
+          *(pStatQuant + j - 1) = *(pStatQuant + j);
+
+          free(*(ppWord + j));
+          *(ppWord + j) = malloc((strlen(buffer) + 1) * sizeof(char));
+          strcpy(*(ppWord + j), buffer);
+          *(pStatQuant + j) = temp;
+        }
+      }
+    }
+    for (int i = 0; i < wordCount; i++){
+      printf("%s", *(ppWord + i));
+      space(strlen(*(ppWord + i)));
+      printf("%d\n", *(pStatQuant + i));
+    }
+  }
+
+  printf ("Pocet slov:");
+  space(strlen("Pocet slov:"));
+  printf ("%d\n", wordCount);
+  printf ("Nejcastejsi:");
+  space(strlen("Nejcastejsi:") + 1);
+
+  for (int i = 0; i < wordCount; i++){
+    if (*(pStatQuant + i) == maxQuant) printf (" %s", *(ppWord + i));
+  }
+
+  printf ("\nNejmene caste:");
+  space(strlen("Nejmene caste:") + 1);
+  for (int i = 0; i < wordCount; i++){
+    if (*(pStatQuant + i) == minQuant) printf (" %s", *(ppWord + i));
+  }
+
   fr(wordCount);
   return 0;
 }
