@@ -1,22 +1,22 @@
 #include <stdio.h>
-int prd;
+#include <ncurses.h>
 
-void lama (){
-	for (int r = 0; r < 2; r++){
-	prd = 100;
-}
+int main (void)
 
-}
-
-int main (){
-int a = 1;
-int b = 2;
-int in;
-lama();
-printf ("prd = %d\n", prd);
-if (0 > scanf("%d", &in) || in < 0) {
-printf ("error\n");
-}
-else printf ("not error\n");
-return 0;
+{
+        /* compile with gcc -lncurses file.c */
+        int c = 0;
+        /* Init ncurses mode */
+        initscr ();
+        /* Hide cursor */
+        curs_set (0);
+        while (c < 1000) {
+                /* Print at row 0, col 0 */
+                mvprintw (0, 0, "%d", c++);
+                refresh ();
+                sleep (1);
+        }
+        /* End ncurses mode */
+        endwin();
+        return 0;
 }
