@@ -1,17 +1,33 @@
 #include "queue.h"
 
-queue_t * push_to_queue (queue_t *queue, void *data)
-{
-	queue_t * tmp = (queue_t *)malloc(sizeof(queue_t));
-	tmp->data = data;
-	tmp->predchozi = a;
-	return tmp;
-}
+int Elems = 0;
 
 queue_t * create_queue(int capacity){
-  for (int i = 0; i < capacity; i++){
-    = (queue_t *)malloc(sizeof(queue_t));
+  queue_t * pFirst;
+  queue_t * pCurrentStruct = (queue_t *)malloc(sizeof(queue_t));
+  pFirst = pCurrentStruct;
+  if (capacity < 1){
+    for (int i = 0; i < (capacity - 1); i++){
+      pCurrentStruct->pNext = (queue_t *)malloc(sizeof(queue_t));
+      pCurrentStruct = pCurrentStruct->pNext;
+    }
   }
+  pCurrentStruct->pData = NULL;
+  return pFirst;
+}
+
+bool push_to_queue (queue_t *queue, void *data)
+{
+  queue_t * pCurrent = queue;
+  for (int i = 0; i < Elems; i++){
+    if (pCurrent->pNext != NULL){
+      pCurrent = pCurrent->pNext;
+    }
+    else return false;
+  }
+	pCurrent->pData = data;
+  Elems++;
+	return true;
 }
 
 queue_t * pop_from_queue (queue_t *queue)
@@ -22,18 +38,9 @@ queue_t * pop_from_queue (queue_t *queue)
 	return tmp;
 }
 
-
-int main()
-{
-	int a;
-	queue_t * zasobnik = NULL;
-
-	zasobnik = push (zasobnik, 10);
-	zasobnik = push (zasobnik, 33);
-	zasobnik = pop (zasobnik, &a);
-	printf("pop: %d\n", a);
-	zasobnik = pop (zasobnik, &a);
-	printf("pop: %d\n", a);
-
-	return 0;
+void delete_queue(queue_t *queue){
+  while(pCurrent->pNext != NULL){
+    free(pNext->pData);
+    free(pNext->pData);
+  }
 }

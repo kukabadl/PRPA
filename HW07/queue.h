@@ -8,7 +8,7 @@
 /* Queue structure which holds all necessary data */
 typedef struct a {
    // TODO - Include your data structure here
-   int * pData;
+   void * pData;
    struct a * pNext;
 } queue_t;
 

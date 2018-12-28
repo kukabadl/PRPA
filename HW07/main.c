@@ -41,7 +41,7 @@ void get(int idx, queue_t *queue)
    print_int(get_from_queue(queue, idx));
 }
 
-/* 
+/*
  * TEST PROGRAM
  * - reads commands from stdin and executes them in the queue
  */
@@ -61,30 +61,32 @@ int main(int argc, char *argv[])
       // read one command
       int ret = scanf("%1s", s);
       if (ret != 1) {
-	 break;
+        break;
       }
 
       // add command
       if (s[0] == 'a') {
-	 int a;
-	 // read the argument of the command
-	 ret = scanf("%d", &a);
-	 if (ret != 1) {
-	    break;
-	 }
-	 add(a, queue);
-	 // remove command	 
-      } else if (s[0] == 'r') {
-	 pop(queue);
-	 // get command	 
-      } else if (s[0] == 'g') {
-	 int a;
-	 // read the argument of the command
-	 ret = scanf("%d", &a);
-	 if (ret != 1) {
-	    break;
-	 }
-	 get(a, queue);
+        int a;
+        // read the argument of the command
+        ret = scanf("%d", &a);
+        if (ret != 1) {
+          break;
+        }
+        add(a, queue);
+        // remove command
+      }
+      else if (s[0] == 'r') {
+        pop(queue);
+        // get command
+      }
+      else if (s[0] == 'g') {
+        int a;
+        // read the argument of the command
+        ret = scanf("%d", &a);
+        if (ret != 1) {
+          break;
+        }
+        get(a, queue);
       }
    }
 
