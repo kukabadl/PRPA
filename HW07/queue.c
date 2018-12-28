@@ -19,19 +19,19 @@ queue_t * create_queue(int capacity){
   return pFirst;
 }
 
-bool push_to_queue (queue_t *queue, void *data)
+bool push_to_queue (queue_t *queue, void * data)
 {
-  if (pHead->pNext != NULL){
+  if (pHead != NULL){
+    pHead->pData = data;
     pHead = pHead->pNext;
+    return true;
   }
-  else return false;
-	pHead->pData = data;
-	return true;
+  return false;
 }
 
 int get_queue_size(queue_t *queue){
   int numOfElements = 0;
-  if (queue =! NULL){
+  if (queue != NULL){
     queue_t * Temp = queue;
     numOfElements = 1;
     while (Temp->pNext != NULL){
@@ -44,7 +44,7 @@ int get_queue_size(queue_t *queue){
 
 void* get_from_queue(queue_t *queue, int idx){
   queue_t * Temp = queue;
-  if (queue =! NULL){
+  if (queue != NULL){
     if (idx <= 0){
       for (int i = 0; Temp->pNext != NULL && i < idx; i++){
         Temp = Temp->pNext;
@@ -67,11 +67,12 @@ void * pop_from_queue (queue_t *queue)
   if (queue != NULL){
     void * pLastVoid = queue->pData;
     queue_t * pLastQ = queue;
+    //printf("%d\n", *((int*)pLastVoid));
     queue = queue->pNext;
-    free (pLastQ->pData);
-    free (pLastQ->pNext);
-    free (pLastQ);
-    return pLastVoid->pData;
+    //free (pLastQ->pData);
+    //free (pLastQ->pNext);
+    //free (pLastQ);
+    return (int*) pLastVoid;
   }
   return NULL;
 }
