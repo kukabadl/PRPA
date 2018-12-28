@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
         // read the argument of the command
         ret = scanf("%d", &a);
         if (ret != 1) {
+          printf(" ss%d ", a);
           break;
         }
         add(a, queue);
@@ -92,8 +93,6 @@ int main(int argc, char *argv[])
 
    // remove rest of the elements in the queue
    while (get_queue_size(queue)) {
-     printf ("labadum");
-
       void *p = pop_from_queue(queue);
       free(p);
    }

@@ -13,6 +13,7 @@ queue_t * create_queue(int capacity){
       pCurrentStruct->pNext = (queue_t *)malloc(sizeof(queue_t));
       pCurrentStruct->pData = NULL;
       pCurrentStruct = pCurrentStruct->pNext;
+
     }
   }
   pCurrentStruct->pNext = NULL;
@@ -26,6 +27,7 @@ bool push_to_queue (queue_t *queue, void * data)
 {
   if (pHead != NULL){
     pHead->pData = data;
+
     pHead = pHead->pNext;
     return true;
   }
@@ -43,21 +45,21 @@ int get_queue_size(queue_t *queue){
       Temp = Temp->pNext;
     }
   }
-  //printf(" %d ", numOfElements);
+  //printf("num %d ", numOfElements);
   return numOfElements;
 }
 
 void* get_from_queue(queue_t *queue, int idx){
-  queue_t * Temp = queue;
-  if (queue != NULL){
-    if (idx <= 0){
+  queue_t * Temp = pTail;
+  if (pTail != NULL){
+    if (idx >= 0){
       for (int i = 0; Temp->pNext != NULL && i < idx; i++){
         Temp = Temp->pNext;
       }
       return Temp->pData;
     }
     else {
-      for (int i = get_queue_size(queue); i + idx != 0; i--){
+      for (int i = get_queue_size(pTail); i + idx != 0; i--){
         if (Temp->pNext == NULL) return NULL;
         else Temp = Temp->pNext;
       }
