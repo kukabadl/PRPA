@@ -1,10 +1,12 @@
 #include "queue.h"
 
 queue_t * pHead = NULL;   //Ukazatel na naposledy zapsany clen
+queue_t * pTail = NULL;   //Ukazatel na naposledy popnuty clen
 
 queue_t * create_queue(int capacity){
   queue_t * pFirst;
   queue_t * pCurrentStruct = (queue_t *)malloc(sizeof(queue_t));
+  pCurrentStruct->pData = NULL;
   pFirst = pCurrentStruct;
   if (capacity > 1){
     for (int i = 0; i < (capacity - 1); i++){
@@ -16,6 +18,7 @@ queue_t * create_queue(int capacity){
   pCurrentStruct->pNext = NULL;
   pCurrentStruct->pData = NULL;
   pHead = pFirst;
+  pTail = pFirst;
   return pFirst;
 }
 
@@ -30,6 +33,7 @@ bool push_to_queue (queue_t *queue, void * data)
 }
 
 int get_queue_size(queue_t *queue){
+
   int numOfElements = 0;
   if (queue != NULL){
     queue_t * Temp = queue;
@@ -39,6 +43,7 @@ int get_queue_size(queue_t *queue){
       Temp = Temp->pNext;
     }
   }
+  //printf(" %d ", numOfElements);
   return numOfElements;
 }
 
@@ -64,14 +69,9 @@ void* get_from_queue(queue_t *queue, int idx){
 
 void * pop_from_queue (queue_t *queue)
 {
-  if (queue != NULL){
-    void * pLastVoid = queue->pData;
-    queue_t * pLastQ = queue;
-    //printf("%d\n", *((int*)pLastVoid));
-    queue = queue->pNext;
-    //free (pLastQ->pData);
-    //free (pLastQ->pNext);
-    //free (pLastQ);
+  if (pTail != NULL){
+    void * pLastVoid = pTail->pData;
+    pTail = pTail->pNext;
     return (int*) pLastVoid;
   }
   return NULL;

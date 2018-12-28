@@ -92,6 +92,8 @@ int main(int argc, char *argv[])
 
    // remove rest of the elements in the queue
    while (get_queue_size(queue)) {
+     //printf ("labadum");
+
       void *p = pop_from_queue(queue);
       free(p);
    }
