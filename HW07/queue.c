@@ -35,8 +35,8 @@ bool push_to_queue (queue_t *queue, void * data)
 int get_queue_size(queue_t *queue){
 
   int numOfElements = 0;
-  if (queue != NULL){
-    queue_t * Temp = queue;
+  if (pTail != NULL){
+    queue_t * Temp = pTail;
     numOfElements = 1;
     while (Temp->pNext != NULL){
       numOfElements++;
@@ -79,12 +79,12 @@ void * pop_from_queue (queue_t *queue)
 
 void delete_queue(queue_t *queue){
   queue_t * tmp = queue;
-  while(1){
+  while(tmp != NULL){
     //free (tmp->pData);
     //free (tmp->pNext);
     queue = tmp->pNext;
     free (tmp);
-    if (tmp->pNext == NULL) break;
+    //if (tmp->pNext == NULL) break;
     tmp = queue;
   }
   free (tmp);
