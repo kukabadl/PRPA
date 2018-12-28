@@ -1,6 +1,6 @@
 #include "queue.h"
 
-int Elems = 0;
+queue_t * pHead = NULL;   //Ukazatel na naposledy zapsany clen
 
 queue_t * create_queue(int capacity){
   queue_t * pFirst;
@@ -12,35 +12,48 @@ queue_t * create_queue(int capacity){
       pCurrentStruct = pCurrentStruct->pNext;
     }
   }
-  pCurrentStruct->pData = NULL;
+  pCurrentStruct->pNext = NULL;
+  pHead = pFirst;
   return pFirst;
 }
 
 bool push_to_queue (queue_t *queue, void *data)
 {
-  queue_t * pCurrent = queue;
-  for (int i = 0; i < Elems; i++){
-    if (pCurrent->pNext != NULL){
-      pCurrent = pCurrent->pNext;
-    }
-    else return false;
+  if (pHead->pNext != NULL){
+    pHead = pHead->pNext;
   }
-	pCurrent->pData = data;
-  Elems++;
+  else return false;
+	pHead->pData = data;
 	return true;
 }
 
-queue_t * pop_from_queue (queue_t *queue)
+int get_queue_size(queue_t *queue){
+  
+}
+
+void * pop_from_queue (queue_t *queue)
 {
-	*data = a->data;
-	queue_t * tmp = a->predchozi;
-	free (a);
-	return tmp;
+  if (queue != NULL){
+    void * pLastVoid = queue->pData;
+    queue_t * pLastQ = queue;
+    queue = queue->pNext;
+    free (pLastQ->pData);
+    free (pLastQ->pNext);
+    free (pLastQ);
+    return pLastVoid->pData;
+  }
+  return NULL;
 }
 
 void delete_queue(queue_t *queue){
-  while(pCurrent->pNext != NULL){
-    free(pNext->pData);
-    free(pNext->pData);
+  queue_t * tmp = queue;
+  while(1){
+    //free (tmp->pData);
+    //free (tmp->pNext);
+    queue = tmp->pNext;
+    free (tmp);
+    if (tmp->pNext == NULL) break;
+    tmp = queue;
   }
+  free (tmp);
 }
