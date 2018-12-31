@@ -9,21 +9,6 @@ g 2
 g 3
 r
 r
-a 1
-a 2
-r
-r
-3
-g 0
-r
-a 1
-a 2
-g 0
-g 1
-g 2
-g 3
-r
-r
 r
 r
 a 1

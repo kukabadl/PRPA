@@ -11,6 +11,12 @@ typedef struct a {
    void * pData;
    struct a * pNext;
    bool popped;
+} QindivData;
+
+typedef struct b { //
+	QindivData * pHead;
+	QindivData * pTail;
+	int cap;
 } queue_t;
 
 /* creates a new queue with a given size */
