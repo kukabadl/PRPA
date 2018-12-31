@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "stdbool.h"
 
 #include "queue.c"
 
@@ -70,7 +71,6 @@ int main(int argc, char *argv[])
         // read the argument of the command
         ret = scanf("%d", &a);
         if (ret != 1) {
-          printf(" ss%d ", a);
           break;
         }
         add(a, queue);

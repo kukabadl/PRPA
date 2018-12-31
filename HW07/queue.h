@@ -10,6 +10,7 @@ typedef struct a {
    // TODO - Include your data structure here
    void * pData;
    struct a * pNext;
+   bool popped;
 } queue_t;
 
 /* creates a new queue with a given size */

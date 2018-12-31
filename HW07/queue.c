@@ -1,9 +1,11 @@
 #include "queue.h"
 
-queue_t * pHead = NULL;   //Ukazatel na naposledy zapsany clen
-queue_t * pTail = NULL;   //Ukazatel na naposledy popnuty clen
-
+queue_t * pHead = NULL;   //Ukazatel na na posledy zapsany clen
+queue_t * pTail = NULL;   //Ukazatel na na posledy popnuty clen
+int cap;
+int popStop = 0;
 queue_t * create_queue(int capacity){
+  cap = capacity;
   queue_t * pFirst;
   queue_t * pCurrentStruct = (queue_t *)malloc(sizeof(queue_t));
   pCurrentStruct->pData = NULL;
@@ -12,12 +14,13 @@ queue_t * create_queue(int capacity){
     for (int i = 0; i < (capacity - 1); i++){
       pCurrentStruct->pNext = (queue_t *)malloc(sizeof(queue_t));
       pCurrentStruct->pData = NULL;
+      pCurrentStruct->popped = false;
       pCurrentStruct = pCurrentStruct->pNext;
-
     }
   }
-  pCurrentStruct->pNext = NULL;
+  pCurrentStruct->pNext = pFirst;
   pCurrentStruct->pData = NULL;
+  pCurrentStruct->popped = false;
   pHead = pFirst;
   pTail = pFirst;
   return pFirst;
@@ -27,6 +30,9 @@ bool push_to_queue (queue_t *queue, void * data)
 {
   if (pHead != NULL){
     pHead->pData = data;
+    pHead->popped = false;
+    printf ("%d ",(int) pHead);
+    printf ("%d\n",* ((int *) data));
 
     pHead = pHead->pNext;
     return true;
@@ -35,18 +41,15 @@ bool push_to_queue (queue_t *queue, void * data)
 }
 
 int get_queue_size(queue_t *queue){
-
-  int numOfElements = 0;
-  if (pTail != NULL){
-    queue_t * Temp = pTail;
-    numOfElements = 1;
-    while (Temp->pNext != NULL){
-      numOfElements++;
-      Temp = Temp->pNext;
-    }
+  queue_t * Temp = pTail;
+  int i = 0;
+  while (1){
+    if (Temp->popped == false) i++;
+    Temp = Temp->pNext;
+    if (Temp == pTail) break;
   }
+  return i;
   //printf("num %d ", numOfElements);
-  return numOfElements;
 }
 
 void* get_from_queue(queue_t *queue, int idx){
@@ -71,23 +74,33 @@ void* get_from_queue(queue_t *queue, int idx){
 
 void * pop_from_queue (queue_t *queue)
 {
-  if (pTail != NULL){
-    void * pLastVoid = pTail->pData;
+  void * pLastVoid = pTail->pData;
+  if (pTail->popped == false){
+    pTail->pData = NULL;
+    pTail->popped = true;
     pTail = pTail->pNext;
     return (int*) pLastVoid;
   }
-  return NULL;
+  else return NULL;
 }
 
 void delete_queue(queue_t *queue){
-  queue_t * tmp = queue;
-  while(tmp != NULL){
-    //free (tmp->pData);
-    //free (tmp->pNext);
-    queue = tmp->pNext;
-    free (tmp);
-    //if (tmp->pNext == NULL) break;
-    tmp = queue;
+  queue_t * Temp = pTail->pNext;
+  pTail->pNext = NULL;
+  //printf ("%d\n",(int) Temp);
+  //printf ("%d\n",(int) *((int *) Temp->pData));
+  int i = 0;
+  while(Temp->pNext != NULL){
+    printf ("%d ", i);
+    printf ("%d",(int) Temp);
+    printf (" X %d\n",(int) pTail);
+    Temp = Temp->pNext;
+    free (Temp);
+    i++;
   }
-  free (tmp);
+  free (Temp);
 }
+/*
+printf ("%d",(int) Temp);
+printf (" X %d\n",(int) pTail);
+printf ("%d\n", i);*/
