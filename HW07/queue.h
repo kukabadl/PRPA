@@ -7,15 +7,21 @@
 
 /* Queue structure which holds all necessary data */
 typedef struct a {
-   // TODO - Include your data structure here
    void * pData;
    struct a * pNext;
    bool popped;
 } QindivData;
 
-typedef struct b { //
+typedef struct b {
+   struct b * pNext;
+   QindivData * pQindivData;
+} thousands;
+
+typedef struct c { //
 	QindivData * pHead;
 	QindivData * pTail;
+  thousands * pThousands;
+  int numOfPopped;
 	int cap;
 } queue_t;
 

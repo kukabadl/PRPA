@@ -3,6 +3,7 @@
 queue_t * create_queue(int capacity){
   QindivData * pQindivData = (QindivData *) malloc(sizeof(QindivData));
   queue_t * pQueue = (queue_t *)malloc(sizeof(queue_t));
+  pQueue->pThousands = (thousands *) malloc(sizeof(thousands));
   pQindivData->pData = NULL;
   pQueue->cap = 0;
   pQueue->pHead = pQindivData;
@@ -12,12 +13,25 @@ queue_t * create_queue(int capacity){
       pQindivData->pNext = (QindivData *)malloc(sizeof(QindivData));
       pQindivData->pData = NULL;
       pQindivData->popped = true;
+      }
       pQindivData = pQindivData->pNext;
-    }
   }
   pQindivData->pNext = pQueue->pHead;
   pQindivData->pData = NULL;
   pQindivData->popped = true;
+  pQueue->numOfPopped = 0;
+
+  QindivData * TempInd = pQueue->pHead;
+  thousands * TempTh = pQueue->pThousands;
+
+  for (int i = 1; TempInd != NULL; i++){
+    if ((i % 500) == 0){
+      TempTh->pQindivData = TempInd;
+      TempTh = TempTh->pNext;
+      TempTh =(thousands *) malloc(sizeof(thousands));
+      TempTh->pNext = NULL;
+    }
+  }
   return pQueue;
 }
 
@@ -28,7 +42,7 @@ bool push_to_queue (queue_t * pQueue, void * data)
     pQindivData->pData = data;
     pQindivData->popped = false;
     pQueue->pHead = pQindivData->pNext;
-    pQueue->cap += 1;
+    pQueue->cap ++;
     return true;
   }
   return false;
@@ -38,26 +52,23 @@ int get_queue_size(queue_t * pQueue){
   return pQueue->cap;
 }
 
-void* get_from_queue(queue_t * pQueue, int idx){
+void* get_from_queue(queue_t * pQueue, int index){
   QindivData * Temp = pQueue->pTail;
-  if (abs(idx) >= pQueue->cap){
-    return NULL;
-  }
-  if (idx >= 0){
-    for (int i = 0; Temp->pNext != NULL && i < idx; i++){
-      Temp = Temp->pNext;
+  if (index >= 0 && index < pQueue->cap){
+    thousands * TempTh = pQueue->pThousands;
+    int a = 0;
+    for (; (a * 500) < (index / 500); a++){
+      TempTh = TempTh->pNext;
     }
-    return Temp->pData;
-  }
-  else {/*
-    for (int i = pQueue->cap; i + idx != 0; i--){
-      if (Temp->pNext == NULL) return NULL;
-      else Temp = Temp->pNext;
+    QindivData * TempInd = TempTh->pQindivData;
+    a *= 500;
+    while (a < index){
+      TempInd = TempInd->pNext;
+      a++;
     }
-    return Temp->pData;
-    */
-    return NULL;
+    return TempInd->pData;
   }
+  else return NULL;
 }
 
 void * pop_from_queue (queue_t * pQueue)
@@ -69,6 +80,7 @@ void * pop_from_queue (queue_t * pQueue)
     pQindivData->popped = true;
     pQueue->pTail = pQindivData->pNext;
     pQueue->cap --;
+    pQueue->numOfPopped ++;
     return (int*) pLastVoid;
   }
   else return NULL;
