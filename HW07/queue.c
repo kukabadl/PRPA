@@ -4,6 +4,7 @@ queue_t * create_queue(int capacity){
   QindivData * pQindivData = (QindivData *) malloc(sizeof(QindivData));
   queue_t * pQueue = (queue_t *)malloc(sizeof(queue_t));
   pQueue->pThousands = (thousands *) malloc(sizeof(thousands));
+  pQueue->pThousands->pNext = NULL;
   pQindivData->pData = NULL;
   pQueue->cap = 0;
   pQueue->pHead = pQindivData;
@@ -24,13 +25,14 @@ queue_t * create_queue(int capacity){
   QindivData * TempInd = pQueue->pHead;
   thousands * TempTh = pQueue->pThousands;
 
-  for (int i = 1; TempInd != NULL; i++){
+  for (int i = 0; i <= capacity; i++){
     if ((i % 500) == 0){
       TempTh->pQindivData = TempInd;
       TempTh = TempTh->pNext;
       TempTh =(thousands *) malloc(sizeof(thousands));
       TempTh->pNext = NULL;
     }
+    TempInd = TempInd->pNext;
   }
   return pQueue;
 }
@@ -52,7 +54,7 @@ int get_queue_size(queue_t * pQueue){
   return pQueue->cap;
 }
 
-void* get_from_queue(queue_t * pQueue, int index){
+void * get_from_queue(queue_t * pQueue, int index){
   QindivData * Temp = pQueue->pTail;
   if (index >= 0 && index < pQueue->cap){
     thousands * TempTh = pQueue->pThousands;
@@ -94,6 +96,13 @@ void delete_queue(queue_t * pQueue){
     pQindivData = Temp->pNext;
     free (Temp);
     Temp = pQindivData;
+  }
+  thousands * pThousands = pQueue->pThousands;
+  thousands * pTempThousands = pThousands->pNext;
+  while(pTempThousands != NULL){
+    free (pTempThousands);
+    pThousands = pTempThousands;
+    pTempThousands = pTempThousands->pNext;
   }
   free (Temp);
   free (pQueue);
