@@ -100,10 +100,11 @@ void delete_queue(queue_t * pQueue){
   thousands * pThousands = pQueue->pThousands;
   thousands * pTempThousands = pThousands->pNext;
   while(pTempThousands != NULL){
-    free (pTempThousands);
+    free (pThousands);
     pThousands = pTempThousands;
     pTempThousands = pTempThousands->pNext;
   }
+  free (pThousands);
   free (Temp);
   free (pQueue);
 }
